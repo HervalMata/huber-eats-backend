@@ -2,9 +2,14 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [RestaurantsModule,
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: process.env.NODE_ENV === 'dev' ? '.env.dev' : '.env.test',
+    }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
@@ -17,7 +22,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
     GraphQLModule.forRoot({
     autoSchemaFile: true,
-  }),],
+  }),
+    RestaurantsModule,
+  ],
   controllers: [],
   providers: [],
 })
